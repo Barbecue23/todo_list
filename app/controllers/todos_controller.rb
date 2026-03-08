@@ -3,7 +3,7 @@ class TodosController < ApplicationController
 
   # GET /todos or /todos.json
   def index
-    @todos = Todo.all
+    @todos_by_status = Todo.order(updated_at: :desc).group_by(&:status)
   end
 
   # GET /todos/1 or /todos/1.json
@@ -60,11 +60,11 @@ class TodosController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_todo
-      @todo = Todo.find(params.expect(:id))
+      @todo = Todo.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def todo_params
-      params.expect(todo: [ :title, :description, :completed, :due_date ])
+      params.require(:todo).permit(:title, :description, :completed, :due_date, :status)
     end
 end
